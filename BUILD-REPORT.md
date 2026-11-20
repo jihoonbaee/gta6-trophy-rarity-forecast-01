@@ -1,190 +1,191 @@
-# V3 build report
+# K1g build report
 
-Built fresh from `/home/hatch/workspace/makefun/gta6-trophy-rarity-v3/DESAIN-BRIEF-V3.md` on 20 November 2026. The entry uses only Python's standard library, with no network or randomness. The deliverables are `main.py`, `README.md` (with all three exact requested badges), and this report. `verify.py` and `.verification/` are local reproducibility evidence, not dependencies of the entry.
+**Fix:** The frozen branch now uses the design's rounded scenario factors (`6.06` for players and `1.34` for earners) in place of the exact aggregate ratios. All nine local verifications were rerun and still pass.
 
-All eight mandatory verification groups completed successfully. The large R=0 → R=1 discontinuity remains a design defect: ordinary trophy output medians jump by **1.1475685080005587–1.1516426136719735 logits** in the specified small-change experiment. This report does not claim final forecasting accuracy.
+Built `main.py` fresh from the K1g prose brief. All nine local verifications passed on Python 3.12.3. The entry uses the standard library and retains the locked guard thresholds.
 
-## Sources and execution scope
+## Commands run
 
-Read only the V3 prose brief, the authorized kit's RULES and p00/p01, the three explicitly authorized devtools, and files in this workdir. No previous entry or previous brief was read. No starter README was found by the permitted filename search, so the three badge lines supplied by the user were used exactly. No web browsing, API use, bundling, entry check, submission, GitHub operation, or credential access occurred. All generated files are inside `/tmp/trophy-v3-build`.
-
-The local harness executes the authorized devtool source in memory. It redirects the synthetic generator's obsolete kit input path to the authorized kit27 p00 and redirects test_synth.py's import-time work directory into this workdir. It imports only the scorer functions; it never runs the scorer's old entry-loading main function. No external devtool was modified. The supplied final-style generator was used as written: it produces 120 reads 30 minutes apart, with R=119 because player counts change at every read despite the generator's comment about step patterns. The additional seeded final-like generator in test_synth.py also ran; its randomness is confined to verification and never enters main.py.
-
-## Exact commands
-
-The only top-level shell command was the following, run twice from `/tmp/trophy-v3-build` (both executions exited 0). The second run followed additional assertions for rounding, spread, factor caps, nulls, zeros, and 30-minute final-style spacing; entry code was unchanged between runs.
+Shell commands, from `/tmp/trophy-k1g-build`:
 
 ```sh
-python3 -B verify.py
+python3 --version
+python3 -B verify_k1g.py
+python3 -B verify_k1g.py
+python3 -B verify_k1g.py
+rm -r -- .verification
+python3 -c 'import sys; print(sys.executable)'
 ```
 
-Each invocation made these exact five subprocess calls. The first four used cwd `/tmp/trophy-v3-build`; the last used cwd `/tmp/trophy-v3-build/.verification`. Environment was inherited with `PYTHONDONTWRITEBYTECODE=1` and the two explicit directory overrides below. No environment values were displayed or inspected for secrets.
+The first harness attempt hit a stale kit path in the allowed synthetic generator; the path was redirected in memory to the specified kit. The second attempt reached the practice checks, then failed in the harness's exact comparison of floating-point hour differences. Switching that assertion to exact timestamp deltas fixed it. The third attempt completed. No entry code changed between these attempts. The temporary `verify_k1g.py` was removed by patch after verification.
+
+The harness ran the following subprocesses (shell equivalents shown with exact argv and environment; `env -i` describes how the subprocess environment was constructed). The third command used `/tmp/trophy-k1g-build/.verification/in` as its working directory; the others used `/tmp/trophy-k1g-build`.
 
 ```sh
-MAKEFUN_INPUT_DIR=/home/hatch/workspace/makefun/kits/gta6-trophy-rarity-forecast-01-kit27/gta6-trophy-rarity-forecast-01-kit/input MAKEFUN_OUTPUT_DIR=/tmp/trophy-v3-build/.verification/practice1 PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 /tmp/trophy-v3-build/main.py
-MAKEFUN_INPUT_DIR=/home/hatch/workspace/makefun/kits/gta6-trophy-rarity-forecast-01-kit27/gta6-trophy-rarity-forecast-01-kit/input MAKEFUN_OUTPUT_DIR=/tmp/trophy-v3-build/.verification/practice2 PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 /tmp/trophy-v3-build/main.py
-MAKEFUN_INPUT_DIR=/tmp/trophy-v3-build/.verification/generated MAKEFUN_OUTPUT_DIR=/tmp/trophy-v3-build/.verification/synthetic1 PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 /tmp/trophy-v3-build/main.py
-MAKEFUN_INPUT_DIR=/tmp/trophy-v3-build/.verification/generated MAKEFUN_OUTPUT_DIR=/tmp/trophy-v3-build/.verification/synthetic2 PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 /tmp/trophy-v3-build/main.py
-MAKEFUN_INPUT_DIR=/home/hatch/workspace/makefun/kits/gta6-trophy-rarity-forecast-01-kit27/gta6-trophy-rarity-forecast-01-kit/input MAKEFUN_OUTPUT_DIR=/tmp/trophy-v3-build/.verification/grader PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -P -s /tmp/trophy-v3-build/main.py
+env -i MAKEFUN_INPUT_DIR=/home/hatch/workspace/makefun/kits/gta6-trophy-rarity-forecast-01-kit27/gta6-trophy-rarity-forecast-01-kit/input MAKEFUN_OUTPUT_DIR=/tmp/trophy-k1g-build/.verification/out /usr/bin/python3 /tmp/trophy-k1g-build/main.py
+env -i MAKEFUN_INPUT_DIR=/home/hatch/workspace/makefun/kits/gta6-trophy-rarity-forecast-01-kit27/gta6-trophy-rarity-forecast-01-kit/input MAKEFUN_OUTPUT_DIR=/tmp/trophy-k1g-build/.verification/out2 /usr/bin/python3 /tmp/trophy-k1g-build/main.py
+env -i MAKEFUN_INPUT_DIR=/home/hatch/workspace/makefun/kits/gta6-trophy-rarity-forecast-01-kit27/gta6-trophy-rarity-forecast-01-kit/input MAKEFUN_OUTPUT_DIR=/tmp/trophy-k1g-build/.verification/grader /usr/bin/python3 -P -s /tmp/trophy-k1g-build/main.py
+env -i MAKEFUN_INPUT_DIR=/tmp/trophy-k1g-build/.verification/in MAKEFUN_OUTPUT_DIR=/tmp/trophy-k1g-build/.verification/out /usr/bin/python3 /tmp/trophy-k1g-build/main.py
 ```
 
-Other actions used file read/search and apply_patch tools, not shell commands. Full subprocess argv/cwd records and numerical evidence are in `.verification/results.json`; `verify.py` contains all in-process assertions and diagnostic definitions.
+The harness loaded `score_local.py` as a library and used the allowed `synth.py` generators. It supplied its own output validator, sensitivity fixtures, curve/decomposition diagnostics, and independent fit arithmetic.
 
-## 1. Practice determinism
+## 1, 2, 3 and 6: Reproducibility, format, scorer and grader invocation
 
-PASS. p00 and p01 each ran twice, and both pairs were byte-identical. Both cases also happen to produce identical forecasts because their frozen scenarios hit the same caps.
+- **1:** Two normal CLI runs produced byte-identical output for each of p00 and p01.
+- **2:** Each output was 2,794 bytes, compact JSON with a final newline. Each contained 55 rows, IDs 1 through 55 once each in order, only the required keys, and five finite nondecreasing quantiles in `[0,100]` per row. Quantiles satisfied the decimal and integer rendering requirements.
+- **3:** The scorer matched each item in the RULES worked example at six decimals and produced exactly `0.403404` at the grader's scoring precision.
+- **6:** The CLI run with `-P -s` from a different directory produced the same bytes for both cases.
 
-| Case | Output bytes | SHA-256 (both runs) |
-| --- | ---: | --- |
-| p00 | 2794 | 9ba183b64897232ccbd31628f35094ec26d04944edad7d6e08876e28b6390c70 |
-| p01 | 2794 | 9ba183b64897232ccbd31628f35094ec26d04944edad7d6e08876e28b6390c70 |
+## 4: Synthetic scenarios
 
-## 2. Format
+Mean logit pinball loss; lower is better. Persistence is the documented house persistence forecast with random-walk spread. Curve is a local implementation of the documented house trend comparator: unweighted least squares over the last 24 hours of raw reads, logit rate against log-time, fitted level at target, and random-walk plus residual RMS in quadrature; it falls back to persistence for fewer than three reads. The final-style fixture had exactly 120 reads at 30-minute intervals. All 17 generated sensitivity and edge outputs passed format validation; the batch took 0.1643 seconds locally, including process startup.
 
-PASS. Each practice output has exactly the top-level key `trophies`, exactly 55 rows, IDs 1–55 once each in ascending order, exactly `id` and `q` per row, five finite non-decreasing numbers in [0,100], and file size strictly below 65,536 bytes. JSON is compact and newline-terminated. Every generated output was also validated and compared byte-for-byte across two runs. The generated batch has 13 cases: the seven requested scenarios, the devtool's two edge cases and seeded final-like case, single/missing-rate history, empty history, and no positive tracked players.
+| Scenario | K1g | Persistence | Curve | Decomp n | Decomp mean absolute median gap (pp) | Decomp max gap (pp) |
+|---|---:|---:|---:|---:|---:|---:|
+| Stable | 0.109460401 | 0.099388182 | 0.099433811 | 54 | 0.000000 | 0.0000 |
+| Dilution | 0.339070025 | 0.436524282 | 0.124618736 | 54 | 0.115346 | 0.2669 |
+| Progression | 0.281332743 | 0.344740861 | 0.117247556 | 54 | 1.300574 | 2.9954 |
+| Reversal | 0.245281804 | 0.255806225 | 0.403917123 | 54 | 0.014693 | 0.0352 |
+| Staleness | 0.111232290 | 0.026637913 | 0.028546870 | 54 | 0.001041 | 0.0021 |
+| Zero to positive | 0.129204565 | 0.148988097 | 0.130060719 | 51 | 3.879873 | 99.4070 |
+| Final-style | 0.246239009 | 0.275244338 | 0.237104489 | 54 | 0.045339 | 0.1092 |
 
-## 3. Scorer worked example and conditional practice diagnostics
+Decomposition is diagnostic only: collapse repeats, separately fit log players and log implied earners against log-time on matching observations with 12-hour weights, omit points with earners below 0.05, and use the slope difference to extrapolate from the last rate. Differences above are against K1g medians, for ordinary positive-rate trophies with enough points. These scenarios test mechanics and sensitivity; they do not validate forecast accuracy on real data.
 
-PASS. The RULES worked example gives raw floating-point mean **0.40340433785720897**, which is **0.403404 exactly at the rules' six-decimal score precision**. Both sets of five published item losses agree within half a unit in their last printed decimal. No artificial truncation of the raw mean was used. This worked example validates the scorer formula.
+Empty and all-nonpositive-player histories both returned median 1%. The single-rate fixture kept that trophy at its observed median and returned 0.5% for the all-null trophy. In the unlock fixture the persistent bronze zeros (IDs 5 and 6, with same-tier unlocks) had q95 of 0.0518%, versus 0.0228% for the persistent gold zero (ID 7, without same-tier unlocks).
 
-Practice A/B/C are conditional reconstructions, not known answers or bounds on truth. Results below apply separately and identically to p00 and p01:
+## 5: Sensitivity
 
-| Reconstruction | V3 loss | House persistence with its random-walk spread |
-| --- | ---: | ---: |
-| A | 0.27284989810311067 | 1.4009576828005517 |
-| B | 0.2770931871147506 | 1.4221741278587539 |
-| C | 0.29633839634139436 | 1.5172889649782626 |
+- **5a:** Appending a later identical read to the stable case left output byte-identical.
+- **5c:** Reducing the staleness case from 13 to 4 polls while keeping both distinct states and their first timestamps left output byte-identical.
+- **5d:** At truth 95%, the fixed `[99.8,100,100,100,100]` row costs **5.126700364744** mean pinball (or 0.093212733904 of a 55-trophy mean). The same row costs 0.059952685424 at truth 100%. An all-100 row costs 6.265801387808 at 95% and zero at 100%.
 
-Matching an aggregate baseline near 1.51 does not identify the correct answer allocation. Differences from 1.40/1.42/1.52 do not disprove the scorer. Calibration and these reconstructions use the same one observed refresh, so practice improvement is near-circular and not independent forecasting evidence.
+### 5b: R = 0 to R = 1 discontinuity
 
-## 4. Synthetic scenarios and decomposition diagnostic
+Appended one read to p00 one second before its checkpoint, retaining the same players and all rates except ID 3, increased from 1.25% to 1.26%. The target and declared horizon were unchanged. The new read moved the whole case from the frozen prior to the trend branch. All 55 medians and exact changes at output precision are below. Changes are in percentage points; the largest was **+1.3809 pp for unchanged ID 20**. All 54 ordinary medians increased; the boundary trophy was unchanged.
 
-PASS as sensitivity/logic executions. These results are not validation against real future data. Persistence-point repeats each last rate five times. House persistence uses the devtool's documented random-walk spread. The trend comparator is an **undamped, last-rate-anchored weighted direct logit regression** on distinct observations, using the same 12-hour weights and log-time mapping as the candidate. It reuses candidate boundary/zero behavior and estimates candidate spread from its rounded q25/q75; this introduces a small rounding discrepancy. It is a documented comparator, not a claim to reproduce the house curve baseline.
+| ID | R=0 median | R=1 median | Change (pp) |
+|---:|---:|---:|---:|
+| 1 | 0.2033 | 0.6300 | +0.4267 |
+| 2 | 100.0000 | 100.0000 | +0.0000 |
+| 3 | 0.4035 | 1.2602 | +0.8567 |
+| 4 | 0.3551 | 1.1000 | +0.7449 |
+| 5 | 0.3551 | 1.1000 | +0.7449 |
+| 6 | 0.3551 | 1.1000 | +0.7449 |
+| 7 | 0.3551 | 1.1000 | +0.7449 |
+| 8 | 0.3551 | 1.1000 | +0.7449 |
+| 9 | 0.3551 | 1.1000 | +0.7449 |
+| 10 | 0.3551 | 1.1000 | +0.7449 |
+| 11 | 0.3551 | 1.1000 | +0.7449 |
+| 12 | 0.3551 | 1.1000 | +0.7449 |
+| 13 | 0.3551 | 1.1000 | +0.7449 |
+| 14 | 0.2033 | 0.6300 | +0.4267 |
+| 15 | 0.2033 | 0.6300 | +0.4267 |
+| 16 | 0.2517 | 0.7800 | +0.5283 |
+| 17 | 0.2033 | 0.6300 | +0.4267 |
+| 18 | 0.2033 | 0.6300 | +0.4267 |
+| 19 | 0.2517 | 0.7800 | +0.5283 |
+| 20 | 0.6591 | 2.0400 | +1.3809 |
+| 21 | 0.3034 | 0.9400 | +0.6366 |
+| 22 | 0.2517 | 0.7800 | +0.5283 |
+| 23 | 0.2517 | 0.7800 | +0.5283 |
+| 24 | 0.2517 | 0.7800 | +0.5283 |
+| 25 | 0.2033 | 0.6300 | +0.4267 |
+| 26 | 0.2033 | 0.6300 | +0.4267 |
+| 27 | 0.2517 | 0.7800 | +0.5283 |
+| 28 | 0.2033 | 0.6300 | +0.4267 |
+| 29 | 0.2517 | 0.7800 | +0.5283 |
+| 30 | 0.2033 | 0.6300 | +0.4267 |
+| 31 | 0.2033 | 0.6300 | +0.4267 |
+| 32 | 0.2033 | 0.6300 | +0.4267 |
+| 33 | 0.3034 | 0.9400 | +0.6366 |
+| 34 | 0.2517 | 0.7800 | +0.5283 |
+| 35 | 0.4035 | 1.2500 | +0.8465 |
+| 36 | 0.2517 | 0.7800 | +0.5283 |
+| 37 | 0.3034 | 0.9400 | +0.6366 |
+| 38 | 0.5070 | 1.5700 | +1.0630 |
+| 39 | 0.3034 | 0.9400 | +0.6366 |
+| 40 | 0.2517 | 0.7800 | +0.5283 |
+| 41 | 0.3034 | 0.9400 | +0.6366 |
+| 42 | 0.2517 | 0.7800 | +0.5283 |
+| 43 | 0.2517 | 0.7800 | +0.5283 |
+| 44 | 0.3034 | 0.9400 | +0.6366 |
+| 45 | 0.2517 | 0.7800 | +0.5283 |
+| 46 | 0.2517 | 0.7800 | +0.5283 |
+| 47 | 0.2517 | 0.7800 | +0.5283 |
+| 48 | 0.2517 | 0.7800 | +0.5283 |
+| 49 | 0.2517 | 0.7800 | +0.5283 |
+| 50 | 0.2517 | 0.7800 | +0.5283 |
+| 51 | 0.2517 | 0.7800 | +0.5283 |
+| 52 | 0.2517 | 0.7800 | +0.5283 |
+| 53 | 0.3034 | 0.9400 | +0.6366 |
+| 54 | 0.2517 | 0.7800 | +0.5283 |
+| 55 | 0.2517 | 0.7800 | +0.5283 |
 
-| Scenario | Reads / R | V3 | Persistence point | House persistence | Undamped direct trend | Log players/earners diagnostic |
-| --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Stable | 13 / 12 | 0.109460401 | 0 | 0.099388182 | 0.109454096 | 0.109454096 |
-| Dilution | 13 / 12 | 0.339871697 | 0.782475319 | 0.436524282 | 0.137619446 | 0.137011957 |
-| Progression | 13 / 12 | 0.282999096 | 0.629502950 | 0.344740861 | 0.119777385 | 0.118296386 |
-| Reversal | 13 / 12 | 0.251124983 | 0.481278556 | 0.255806225 | 0.235812680 | 0.235791014 |
-| Staleness | 13 / 1 | 0.111232290 | 0.008954339 | 0.026637913 | 0.111118107 | 0.111118107 |
-| Zero-to-positive | 13 / 12 | 0.131816367 | 0.069200824 | 0.148988097 | 0.135728276 | 0.528293319 |
-| Final-style | 120 / 119 | 0.241618460 | 0.319613437 | 0.275244338 | 0.241513482 | 0.241407511 |
+## 7: Zero horizon
 
-The candidate loses to point persistence on stable, staleness, and zero-to-positive. The trend comparator does better on several smooth growth scenarios. These are reported without changing the specified design.
+In both fixtures the checkpoint, target, and last distinct observation shared a timestamp and `horizon_minutes` was 0. The CLI matched the rounded last rates for all **54 ordinary trophies** in each of the moving and frozen fixtures. ID 2's boundary row still had median 100 in both.
 
-Decomposition exists only in verify.py: fit log players and log earners separately with the same x and weights, subtract their extrapolated changes, apply that rate ratio to the last observed rate, then convert to logit. Earners below 0.05 are excluded. Candidate median differences are stored for **every trophy in every scenario** in `.verification/results.json`, under `decomposition_median_minus_candidate_pp`. Examples: final-style IDs 3/20/55 differ by −0.0649/−0.1002/−0.0380 percentage points; staleness id20 differs by −0.0021; zero-to-positive ids3/4 differ by +98.6146/+99.4746. The last two expose severe undamped extrapolation saturation in this diagnostic. It is not part of main.py.
+## 8: Frozen factors and manual blend
 
-Latest local runtime: 0.067658608 seconds for the two practice cases combined, and 0.118794340 seconds for all 13 generated cases combined, including interpreter startup. These are local timings, not grader measurements.
+At 90 minutes, the player factor is exactly `6.06` and the non-universal earner factor is exactly `1.34`. The rate multiplier is `1.34/6.06`, approximately `0.221122112211`. Practice declares a 90-minute checkpoint horizon, but collapsing to the first repeated read gives effective target gaps of 279.17733333 and 309.17733333 minutes. Both give the same capped factors as 90 minutes.
 
-## 5. Sensitivity
+Hand calculation from each last rate `r`, common to p00 and p01: `s = r * (1.34/6.06)`, `L(x) = ln(x/(100-x))` for these unclamped rates, `m = 0.75 L(s) + 0.25 L(r)`, and rate `= 100/(1+exp(-m))`.
 
-**5a identical read:** PASS, exactly unchanged forecast objects after appending an identical read with a later timestamp, tested on practice, dilution, and final-style.
+| ID | Last % | Scenario % | L(s) | L(r) | 0.75 L(s) + 0.25 L(r) | Inverse % | CLI % |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 3 | 1.25 | 0.2764026403 | -5.8882989674 | -4.3694478525 | -5.5085861887 | 0.4035480772 | 0.4035 |
+| 4 | 1.10 | 0.2432343234 | -6.0164648861 | -4.4987990588 | -5.6370484293 | 0.3550717916 | 0.3551 |
+| 20 | 2.04 | 0.4510891089 | -5.3967394684 | -3.8716094242 | -5.0154569574 | 0.6590871820 | 0.6591 |
 
-**5b R=0 → R=1:** Starting with p00, increase every ordinary trophy's rate in its final raw read by **0.01 percentage point**, keep player count and universal rate unchanged, and keep timestamps/checkpoint/target fixed. This creates exactly one distinct refresh. The table gives actual rounded output medians and the signed logit difference computed from those output medians. All differences are positive, so signed differences also equal jump magnitudes. Decimal logit values below preserve the recorded Python floating-point results. The change includes the intentional tiny observed rate increment as well as the branch switch.
+The independent calculation with spread 1.0 also reproduced all five quantiles for each of these rows in both files.
 
-| Trophy ID | Frozen median % | R=1 median % | Change pp | Change logit |
-| ---: | ---: | ---: | ---: | ---: |
-| 1 | 0.2033 | 0.6403 | 0.4370 | 1.1516426136719735 |
-| 2 | 100 | 100 | 0 | 0 |
-| 3 | 0.4035 | 1.2603 | 0.8568 | 1.1475685080005587 |
-| 4 | 0.3551 | 1.1103 | 0.7552 | 1.1475938667298218 |
-| 5 | 0.3551 | 1.1103 | 0.7552 | 1.1475938667298218 |
-| 6 | 0.3551 | 1.1103 | 0.7552 | 1.1475938667298218 |
-| 7 | 0.3551 | 1.1103 | 0.7552 | 1.1475938667298218 |
-| 8 | 0.3551 | 1.1103 | 0.7552 | 1.1475938667298218 |
-| 9 | 0.3551 | 1.1103 | 0.7552 | 1.1475938667298218 |
-| 10 | 0.3551 | 1.1103 | 0.7552 | 1.1475938667298218 |
-| 11 | 0.3551 | 1.1103 | 0.7552 | 1.1475938667298218 |
-| 12 | 0.3551 | 1.1103 | 0.7552 | 1.1475938667298218 |
-| 13 | 0.3551 | 1.1103 | 0.7552 | 1.1475938667298218 |
-| 14 | 0.2033 | 0.6403 | 0.4370 | 1.1516426136719735 |
-| 15 | 0.2033 | 0.6403 | 0.4370 | 1.1516426136719735 |
-| 16 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 17 | 0.2033 | 0.6403 | 0.4370 | 1.1516426136719735 |
-| 18 | 0.2033 | 0.6403 | 0.4370 | 1.1516426136719735 |
-| 19 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 20 | 0.6591 | 2.0503 | 1.3912 | 1.1489694226644134 |
-| 21 | 0.3034 | 0.9503 | 0.6469 | 1.1482354870155866 |
-| 22 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 23 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 24 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 25 | 0.2033 | 0.6403 | 0.4370 | 1.1516426136719735 |
-| 26 | 0.2033 | 0.6403 | 0.4370 | 1.1516426136719735 |
-| 27 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 28 | 0.2033 | 0.6403 | 0.4370 | 1.1516426136719735 |
-| 29 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 30 | 0.2033 | 0.6403 | 0.4370 | 1.1516426136719735 |
-| 31 | 0.2033 | 0.6403 | 0.4370 | 1.1516426136719735 |
-| 32 | 0.2033 | 0.6403 | 0.4370 | 1.1516426136719735 |
-| 33 | 0.3034 | 0.9503 | 0.6469 | 1.1482354870155866 |
-| 34 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 35 | 0.4035 | 1.2603 | 0.8568 | 1.1475685080005587 |
-| 36 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 37 | 0.3034 | 0.9503 | 0.6469 | 1.1482354870155866 |
-| 38 | 0.5070 | 1.5803 | 1.0733 | 1.1477052804825831 |
-| 39 | 0.3034 | 0.9503 | 0.6469 | 1.1482354870155866 |
-| 40 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 41 | 0.3034 | 0.9503 | 0.6469 | 1.1482354870155866 |
-| 42 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 43 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 44 | 0.3034 | 0.9503 | 0.6469 | 1.1482354870155866 |
-| 45 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 46 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 47 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 48 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 49 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 50 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 51 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 52 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 53 | 0.3034 | 0.9503 | 0.6469 | 1.1482354870155866 |
-| 54 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
-| 55 | 0.2517 | 0.7903 | 0.5386 | 1.1495889393193712 |
+## 9: Guard and kink
 
-**5c polling cadence:** PASS. Inserting an identical poll 10 seconds after every original observation produces exactly equal forecasts for practice, dilution, and final-style. First observation times for distinct states are preserved, as required; moving actual refresh timestamps would change the evidence and is not this test.
+Synthetic fixture: 21 distinct reads at `h = 0, 3, ..., 60`, target `h = 66`. For IDs 3 and 4 the generator rounded the inverse logit of `a + b * (1.25 ln(1 + min(h,54)) - 0.145 max(0,h-54))` to two decimals, with `(a,b) = (-4,1)` and `(-5,0.8)` respectively. Both rates rose for 54 hours, then fell sharply for 6 hours. Players were `round(100000 exp(0.03 h))` for the late-reversal case and `round(100000 exp(0.03 min(h,36)))` for the kink case. The trophy paths are identical between fixtures so the comparison isolates the kink.
 
-**5d universal trophy failure:** The fixed `[99.8,100,100,100,100]` row has loss **5.126700364743543** if the truth is 95%, contributing **0.09321273390442807** to a 55-trophy case mean. If truth stays at 100%, that row still costs **0.059952685424466634** because q05 is below 100. Universal confidence is a material assumption.
+Manual slope calculation, using the rounded inputs and independently tabulating the normal equations: `x = ln(1+h)`, `y = logit(rate)`, `w = 2^((h-60)/half_life)`. Below, `W=Σw`, `X=Σwx`, `Y=Σwy`, `XX=Σwx²`, `XY=Σwxy`. Substitute in `(W*XY-X*Y)/(W*XX-X*X)` using unrounded totals.
 
-## 6. Grader-style run
+| ID | Half-life | W | X | Y | XX | XY | Slope | RMS residual |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 3 | 3h | 1.99999905 | 8.11477347 | 0.89321365 | 32.93795133 | 3.58633536 | -2.870493377 | 0.244799433 |
+| 3 | 12h | 6.12005059 | 23.04934615 | 2.91044576 | 88.35989460 | 12.43186680 | 0.947877588 | 0.347504744 |
+| 4 | 3h | 1.99999905 | 8.11477347 | -2.88491451 | 32.93795133 | -11.73541631 | -2.294358034 | 0.195688980 |
+| 4 | 12h | 6.12005059 | 23.04934615 | -8.68736315 | 88.35989460 | -31.54147662 | 0.758595120 | 0.277865141 |
 
-PASS. `/usr/bin/python3 -P -s /tmp/trophy-v3-build/main.py` from the different cwd `/tmp/trophy-v3-build/.verification`, with explicit directory overrides, produced byte-identical p00/p01 files to the ordinary run. All imports are standard library; the entry does not depend on cwd or verify.py.
+To calculate each median, multiply the slope by `ln(67/61)`, then by `(20/22)*(matches/20)*(60/66)`. There are 18 matches for a positive delta and 2 for a negative one. The resulting shifts are below the 1.0 cap. Add the shift to the logit of the last rate (53.47% for ID 3, 15.60% for ID 4) and invert.
 
-## 7. Zero horizon
+| ID | slope3/slope12 | 3h shift | 12h shift | 3h median | 12h median | Reversal CLI | Kink CLI |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 3 | -3.028337639 | -0.022256704 | +0.066145311 | 52.9159 | 55.1113 | 55.1113 | 52.9159 |
+| 4 | -3.024482987 | -0.017789571 | +0.052936698 | 15.3672 | 16.3097 | 16.3097 | 15.3672 |
 
-PASS on both generated branches. In each case checkpoint = target = timestamp of last distinct observation and horizon_minutes = 0. All **54 ordinary trophies per branch** had q50 exactly equal to their last rates after four-decimal rounding. The universal row is excluded under its separate boundary rule. Spread remains nonzero as allowed. The persistent-zero median 0.01 and its narrower spread were also checked separately.
+| Case | Distinct / raw reads | g_q1 (per hour) | g_q4 (per hour) | Kink | Guard fires |
+|---|---:|---:|---:|---|---:|
+| Late reversal | 21 / 21 | 0.0300000445 | 0.0299999300 | No | 2 (IDs 3, 4) |
+| Kink | 21 / 21 | 0.0300000445 | 0.0000000000 | Yes | 0 |
+| p00 | 1 / 7 | n/a | n/a | No | 0 |
+| p01 | 1 / 8 | n/a | n/a | No | 0 |
 
-## 8. Frozen factors, spread, and manual blend arithmetic
+Quartile slopes used unweighted OLS on raw hours and log players, first and last five distinct reads. The late-reversal slopes and ratios satisfy the guard, and the CLI matches the independently calculated slow medians. In the kink fixture the last quartile has less than half the first quartile's growth, blocking the guard despite the same strong slow slopes and negative ratios. Practice stays in the frozen branch. The harness also verified that `|slope12| = 0.1` and ratio `= 0.3` do not fire, and that 11 reads do not enable kink detection. No thresholds were retuned.
 
-PASS. The implementation follows the prose's explicit rounded constants **6.06 and 1.34**, rather than substituting the context ratios 3868/638 = 6.06269592476489 and 408/305 = 1.337704918032787.
+## Practice reconstruction (diagnostic only)
 
-| Horizon from last distinct observation | Player factor | Earner factor |
-| ---: | ---: | ---: |
-| 0 minutes | 1 | 1 |
-| 45 minutes | 2.4617067250182343 | 1.1575836902790226 |
-| 90 minutes | 6.06 | 1.34 |
-| 900 minutes | 6.06 | 1.34 |
+Both practice cases gave the same numbers. A assigns the 103 additional non-universal earners proportional to old counts; B uses squared counts; C uses proportional counts only for rates at least 1.10%. These are conditional allocations, neither verified answers nor bounds on the truth. A match to the reported 1.51 baseline would not validate an allocation. Scorer validation comes from the worked example in verification 3. The prior and the reconstructions share the same refresh aggregates, so this is not an independent accuracy test.
 
-At h=90, the scenario multiplies rates by 1.34/6.06 = **0.22112211221122116**. After collapsing identical polls, both practices' retained timestamp is 2026-11-18T23:50:49.360Z, so h is actually **279.17733333333337** minutes for p00 and **309.17733333333337** for p01. Both hit the same factor caps as h=90. This distinction follows the brief's last-distinct-observation horizon definition.
+| Case | Allocation | Persistence | K1g |
+|---|---|---:|---:|
+| p00 | A | 1.400957683 | 0.272849898 |
+| p00 | B | 1.422174128 | 0.277093187 |
+| p00 | C | 1.517288965 | 0.296338396 |
+| p01 | A | 1.400957683 | 0.272849898 |
+| p01 | B | 1.422174128 | 0.277093187 |
+| p01 | C | 1.517288965 | 0.296338396 |
 
-Independent manual substitution from the last rates uses S = r × 1.34 / 6.06, Lp = ln((r/100)/(1−r/100)), Ls = ln((S/100)/(1−S/100)), M = 0.75 Ls + 0.25 Lp, then median = 100/(1+exp(−M)). These calculations use elementary arithmetic directly, not the entry's frozen-factor or blend helper.
+## Remaining defects and verification limits
 
-| Trophy | Last r % | Scenario S % | Persistence logit Lp | Scenario logit Ls | Weighted M | Unrounded median % | Entry q50 % |
-| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 3 | 1.25 | 0.27640264026402644 | −4.3694478524670215 | −5.8882989674151345 | −5.508586188678106 | 0.40354807717955843 | 0.4035 |
-| 4 | 1.10 | 0.24323432343234327 | −4.498799058824342 | −6.016464886115455 | −5.637048429292677 | 0.3550717916396141 | 0.3551 |
-| 20 | 2.04 | 0.4510891089108911 | −3.871609424227842 | −5.396739468392086 | −5.0154569573510255 | 0.6590871819715468 | 0.6591 |
-
-For example id3: 0.75 × (−5.8882989674151345) + 0.25 × (−4.3694478524670215) = −5.508586188678106. Id4 gives −5.637048429292677 and id20 gives −5.0154569573510255 by the same explicit weights. Each inverse and half-up rounding matches the output. Full five-quantile rows for all three trophies also exactly match spread **1.0**, confirming the frozen floor. Specific persistent-zero exceptions retain their separately specified 0.30–0.55 spread.
-
-## Remaining defects, limitations, and interpretation choices
-
-- The approximately 1.15-logit branch discontinuity is large and remains deliberately present to match V3. A tiny observation change switches away from the dilution prior.
-- Frozen calibration is based on one refresh; future refresh factors can differ, and frozen rates can rise. The retained persistence weight is a design hedge, not validated calibration.
-- Trend damping, floors, tier rules, universal confidence, and symmetric normal spreads are unvalidated design assumptions. Symmetry misses directional dilution, delayed unlocks, and point masses. The measured universal-to-95 loss is substantial.
-- Stable, stale, and zero-to-positive synthetic results expose losses relative to point persistence. Synthetic successes do not establish real forecasting accuracy, final 4.52-day accuracy, or superiority over house AI (whose strength is unknown).
-- Local Python is **3.12.3**, not the grader's 3.13. All required checks ran successfully here; execution on Python 3.13 was not measured. The code uses standard library APIs available in both versions.
-- Negative extrapolation horizons are treated as zero for growth and nonnegative time widths; valid contest cases target the future. Time mapping follows the specified epoch and assumes timestamps lie in its log1p domain. Malformed JSON or fundamentally invalid schemas are not given an unspecified recovery strategy.
-- With nulls, persistence is the last non-null rate and fitting skips missing values; the global last distinct timestamp anchors extrapolation, as the brief defines. A single usable rate produces zero slope. Weighted residual fallback uses only trophies with at least three usable distinct observations.
-- The manual arithmetic verification is performed by direct formula substitution in the test harness and explicitly shown above; it does not rely on the entry's forecast center. Diagnostic comparator spread reconstructed from rounded output has minor rounding error, and undamped decomposition can saturate badly. These are test-comparator limitations, not entry deviations.
-
-No known deviation from the specified entry algorithm remains. No final score or independent practice answer is available from the authorized local files.
+- The `R=0` to `R=1` branch change has a material discontinuity: a +0.01 pp input change to one trophy moved all ordinary medians, including a +1.3809 pp jump for an unchanged trophy. This is a remaining model defect specified by the design.
+- The fixed universal-trophy row pays high loss if universality fails. The symmetric logit spread remains uncalibrated and does not capture delayed unlocks or one-sided dilution. The frozen prior rests on one observed refresh.
+- Quantized flat steps can trip the guard, and a kink can block it during a genuine late reversal. The synthetic guard checks establish that the rules execute as specified; they do not establish which choice is more accurate on final data.
+- No implementation deviation was found in the tested cases. Byte identity against the prior candidate is unverified. The `-P -s` test used the local Python 3.12.3 interpreter; a direct Python 3.13 grader test and real final or house-model comparisons were not established by this build.
