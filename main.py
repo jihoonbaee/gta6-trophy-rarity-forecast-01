@@ -12,6 +12,10 @@ from statistics import NormalDist, median
 ORIGIN = datetime(2026, 11, 19, tzinfo=timezone.utc)
 LEVELS = (0.05, 0.25, 0.5, 0.75, 0.95)
 Z = tuple(NormalDist().inv_cdf(tau) for tau in LEVELS)
+# Scale applied to spread when no kink is detected.
+NO_KINK_SPREAD_SCALE = 0.7
+# Maximum allowed value for the scaled spread.
+SCALED_SPREAD_CAP = 2.2
 
 
 def hours(timestamp):
@@ -96,7 +100,7 @@ def forecast(case, diagnostics=None):
     span = max(0.0, times[-1] - times[0])
     refreshes = len(reads) - 1
     kink, g_q1, g_q4 = kink_detector(reads, times)
-    scale = 0.7 if not kink and len(reads) >= 12 else 1.0
+    scale = NO_KINK_SPREAD_SCALE if not kink and len(reads) >= 12 else 1.0
     random_walk = 0.5 * math.sqrt(max(0, case["horizon_minutes"]) / 1440.0)
     models = []
     pooled_steps = []
@@ -166,7 +170,7 @@ def forecast(case, diagnostics=None):
                 distance = span / (span + horizon) if span + horizon > 0 else 0.0
                 weight = refreshes / (refreshes + 2.0) * agreement * distance
                 center += clamp(weight * delta, -1.0, 1.0)
-            scaled_spread = min(2.2, spread * scale)
+            scaled_spread = min(SCALED_SPREAD_CAP, spread * scale)
             q = quantiles(center, scaled_spread)
             model.update(center=center, spread=spread, scaled_spread=scaled_spread)
         rows.append({"id": trophy["id"], "q": q})
